@@ -1,6 +1,6 @@
-![Microphone Data Visualization](https://asset.cloudinary.com/dnmebcuio/2c8b15a7eb63b49ba82c3eb8638fe095)
-![Microphone Data Visualization](https://asset.cloudinary.com/dnmebcuio/d0486ce04aeebfc34c69b1c853bd8032)
-![Microphone Data Visualization](https://asset.cloudinary.com/dnmebcuio/ecf1f048b2699f2b1c33fc3ce8bdcaf6)
+![Image Description](https://asset.cloudinary.com/dnmebcuio/2c8b15a7eb63b49ba82c3eb8638fe095)
+![Image Description](https://asset.cloudinary.com/dnmebcuio/d0486ce04aeebfc34c69b1c853bd8032)
+![Image Description](https://asset.cloudinary.com/dnmebcuio/ecf1f048b2699f2b1c33fc3ce8bdcaf6)
 
 
 
