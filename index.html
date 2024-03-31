@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Microphone Data Visualization</title>
+    <script type="text/javascript" src="smoothie.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        #waveform {
+            border: 1px solid #ccc;
+        }
+
+        button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <h1>Microphone Data Visualization</h1>
+    <canvas id="waveform" width="800" height="400"></canvas>
+    <button id="startButton">Start Recording</button>
+    <button id="stopButton">Stop Recording</button>
+
+    <script>
+        var smoothie = new SmoothieChart({
+            millisPerPixel: 20,
+            grid: { strokeStyle: 'rgba(0, 0, 0, 0.1)', lineWidth: 1, millisPerLine: 250, verticalSections: 6 },
+            labels: { fillStyle: 'rgba(0, 0, 0, 0.8)' }
+        });
+
+        var microphoneData = new TimeSeries();
+        smoothie.addTimeSeries(microphoneData, { strokeStyle: 'rgb(0, 255, 0)', lineWidth: 2 });
+        smoothie.streamTo(document.getElementById('waveform'));
+
+        var audioContext;
+        var scriptNode;
+        var microphone;
+
+        document.getElementById('startButton').addEventListener('click', startRecording);
+        document.getElementById('stopButton').addEventListener('click', stopRecording);
+
+       async function startRecording() {
+            if (!audioContext) {
+                navigator.mediaDevices.getUserMedia({ audio: true })
+                    .then(stream => {
+                        audioContext = new AudioContext();
+                        microphone = audioContext.createMediaStreamSource(stream);
+                        scriptNode = audioContext.createScriptProcessor(1024, 1, 1);
+
+                        scriptNode.onaudioprocess = function(event) {
+                            const inputData = event.inputBuffer.getChannelData(0);
+                            for (let i = 0; i < inputData.length; i++) {
+                                const amplitude = inputData[i];
+                                microphoneData.append(new Date().getTime() + i, amplitude);
+                                microphoneData.append(new Date().getTime() + i, -amplitude); // Append negative amplitude
+                            }
+                        };
+
+                        microphone.connect(scriptNode);
+                        scriptNode.connect(audioContext.destination);
+                    })
+                    .catch(error => {
+                        console.error('Error accessing microphone:', error);
+                    });
+            }
+        }
+
+        function stopRecording() {
+            if (audioContext) {
+                audioContext.close();
+                audioContext = null;
+            }
+            if (scriptNode) {
+                scriptNode.disconnect();
+                scriptNode = null;
+            }
+            if (microphone) {
+                microphone.disconnect();
+                microphone = null;
+            }
+        }
+    </script>
+</body>
+</html>
